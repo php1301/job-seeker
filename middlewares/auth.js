@@ -27,5 +27,13 @@ passport.use(jwtLogin);
 module.exports = {
     initialize: () => passport.initialize(),
     authenticateJWT: passport.authenticate('jwt', { session: false }),
-    authenticateCredentials: passport.authenticate('local', { session: false }),
 };
+module.exports.authorize = (userTypeArr) => (req, res, next) => {
+
+    const { userType } = req.user
+    let index = userTypeArr.findIndex(e => e === userType)
+    if (index != -1)
+        return next()
+    else
+        res.status(401).json({ message: "You are not allowed" })
+}

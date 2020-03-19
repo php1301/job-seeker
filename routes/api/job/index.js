@@ -2,7 +2,8 @@ const express = require('express')
 const jobController = require('./controller')
 const router = express.Router()
 const passportService = require('../../../middlewares/auth');
-const requireCredentials = passportService.authenticateJWT;
-router.get("/", requireCredentials, jobController.getJob)
+const { authorize } = require('../../../middlewares/auth');
+const requireToken = passportService.authenticateJWT;
+router.get("/", requireToken, authorize(["Job Seeker"]), jobController.getJob)
 router.post("/", jobController.createJob)
 module.exports = router
