@@ -6,10 +6,10 @@ const hashPromise = promisify(bcrypt.hash)
 const UserSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    username: { type: String, required: true },
+    fullname: { type: String, required: true },
     userType: { type: String, required: true, default: "anon" },
     avatar: { type: String, required: false },
-    Exp: { type: String, required: true },
+    Exp: { type: String, required: false },
     skills: { type: String },
     bio: { type: String }
 })
@@ -24,7 +24,7 @@ UserSchema.pre("save", function (next) {
         })
         .catch((err) => res.status(400).json(err))
 })
-const User = mongoose.model("Job", JobSchema, "Job")
+const User = mongoose.model("User", UserSchema, "User")
 module.exports = {
     UserSchema, User
 }
