@@ -9,7 +9,8 @@ const JobSchema = new mongoose.Schema({
     jobDescription: { type: String, required: true },
     jobLocation: { type: String, required: true },
     isActive: { type: Boolean },
-    jobCV: [CVSchema],
+    // jobCV: [CVSchema],
+    jobCV: [{ type: mongoose.Schema.Types.ObjectId, ref: "CV" }], //ref
 })
 const Job = mongoose.model("Job", JobSchema, "Job")
 module.exports = {

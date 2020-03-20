@@ -13,7 +13,9 @@ const UserSchema = new mongoose.Schema({
     Exp: { type: String, required: false },
     skills: { type: String },
     bio: { type: String },
-    userCV: [CVSchema],
+    // userCV: [CVSchema],
+    userCV: [{ type: mongoose.Schema.Types.ObjectId, ref: "CV" }], //ref
+
 })
 UserSchema.pre("save", function (next) {
     const user = this

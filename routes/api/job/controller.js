@@ -19,6 +19,7 @@ module.exports.createJob = (req, res, next) => {
 }
 //gui cv
 module.exports.sendCV = (req, res, next) => {
+    //ref
     const { id } = req.user
     const { jobId } = req.params
     User.findById(id)
@@ -29,23 +30,55 @@ module.exports.sendCV = (req, res, next) => {
     Job.findById(jobId)
         .then(job => {
             if (!job) return Promise.reject({ message: "Job not found" })
-            newCV = new CV({
-                cvUrl: req.file.path
+            return newCV = new CV({
+                jobId,
+                userId: id,
+                cvUrl: req.file.path,
             })
-            return newCV
         })
         .then(cv => {
-            Job.update(
+            cv.save()
+            return cv
+        })
+        .then(cv => {
+
+            const jobUpdate = Job.update(
                 { _id: jobId },
                 { $push: { jobCV: cv } }
             )
+            const userUpdate = User.update(
+                { _id: id },
+                { $push: { userCV: cv } }
+            )
+            Promise.all([jobUpdate, userUpdate])
                 .then(res.status(200).json(cv))
                 .catch(err => res.status(400).json(err))
         })
-        // .then(cv => {
-        //     cv.save()
-        //         .then(res.status(200).json(cv))
-        //         .catch(err => res.status(400).json(err))
-        // })
+        //push
+        // const { id } = req.user
+        // const { jobId } = req.params
+        // User.findById(id)
+        //     .then(user => {
+        //         if (!user) return Promise.reject({ message: "User not found" })
+
+        //     })
+        // Job.findById(jobId)
+        //     .then(job => {
+        //         if (!job) return Promise.reject({ message: "Job not found" })
+        //         newCV = new CV({
+        //            
+        //             cvUrl: req.file.path,
+        //         })
+        //         return newCV
+        //     })
+        //     .then(cv => {
+        //         Job.update(
+        //             { _id: jobId },
+        //             { $push: { jobCV: cv } }
+        //         )
+        //             .then(res.status(200).json(cv))
+        //             .catch(err => res.status(400).json(err))
+        //     })
+
         .catch(err => res.status(400).json(err))
 }

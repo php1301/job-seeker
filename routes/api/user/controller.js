@@ -39,3 +39,57 @@ module.exports.login = (req, res, next) => {
         })
         .catch(err => res.status(500).json(err))
 }
+module.exports.recruiterCheck = (req, res, next) => {
+    const { id } = req.user
+    const { jobId } = req.params
+    let author
+    Job.findById(jobId)
+        .populate('author')
+        .then(job => {
+            if (!job) return Promise.reject({ message: "Job not exist" })
+            return author = job.author.id
+        })
+        .then(idAuthor =>
+            User.findById(idAuthor)
+                .then(user => {
+                    if (user.id !== id || !id || !user.id) return Promise.reject({ message: "You are not allow to view this" })
+                    return jobId
+                }))
+        .then(jobId => {
+            Job.findById(jobId)
+                .populate("jobCV")
+                .then((jobs) => res.status(200).json(jobs))
+                .catch((err) => res.status(400).json(err))
+        })
+        .catch(err => res.status(400).json(err))
+}
+module.exports.seekerCheck = (req, res, next) => {
+    const { id } = req.user
+    User.findById(id)
+        .populate('userCV')
+        .then(user => { res.status(200).json(user) })
+        .catch(err => { res.status(400).json(err) })
+}
+module.exports.deleteJob = (req, res, next) => {
+    const { id } = req.user
+    const { jobId } = req.params
+    let author
+    User.findById(id)
+        .then(user => {
+            return author = user.id
+        })
+        .then(author =>
+            Job.findById(jobId)
+                .populate('author')
+                .then(job => {
+                    if (job.author.id !== author || !author || !job.author.id)
+                        return Promise.reject({ message: "Wrong permission" })
+                    return jobId
+                }))
+        .then(_jobId => {
+            Job.deleteOne({ _id: _jobId })
+                .then(() => res.status(200).json({ message: "deleted succesfully" }))
+                .catch(err => res.status(400).json(err))
+        })
+        .catch(err => res.status(400).json(err))
+}
