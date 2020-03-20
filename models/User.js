@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const { promisify } = require('util')
 const genSaltPromise = promisify(bcrypt.genSalt)
 const hashPromise = promisify(bcrypt.hash)
+const { CVSchema } = require('./Cv')
 const UserSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -11,7 +12,8 @@ const UserSchema = new mongoose.Schema({
     avatar: { type: String, required: false },
     Exp: { type: String, required: false },
     skills: { type: String },
-    bio: { type: String }
+    bio: { type: String },
+    userCV: [CVSchema],
 })
 UserSchema.pre("save", function (next) {
     const user = this

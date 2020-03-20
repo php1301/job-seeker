@@ -13,7 +13,6 @@ const jwtOptions = {
 };
 
 const jwtLogin = new JwtStrategy(jwtOptions, function (payload, done) {
-    console.log(payload);
     User.findById(payload._id, function (err, user) {
         if (err) {
             return done(err, false);

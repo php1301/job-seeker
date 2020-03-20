@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const _ = require("lodash");
 const { User } = require("../../../models/User");
+const { Job } = require("../../../models/Job");
+const { CV } = require("../../../models/Cv");
 const jwt = require('jsonwebtoken');
 const { promisify } = require("util");
 const config = require("../../../config");
