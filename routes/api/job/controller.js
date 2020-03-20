@@ -8,15 +8,6 @@ module.exports.getJob = (req, res, next) => {
         .then((jobs) => res.status(200).json(jobs))
         .catch((err) => res.status(400).json(err))
 }
-module.exports.createJob = (req, res, next) => {
-    const { name, author, company, salary, createdDate, jobDescription, jobLocation, isActive, userCV } = req.body
-    const newJob = new Job({
-        name, author, company, salary, createdDate, jobDescription, jobLocation, isActive, userCV
-    })
-    newJob.save()
-        .then((job) => res.status(200).json(job))
-        .catch((err) => res.status(400).json(err))
-}
 //gui cv
 module.exports.sendCV = (req, res, next) => {
     //ref
