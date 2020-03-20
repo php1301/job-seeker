@@ -8,18 +8,19 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     fullname: { type: String, required: true },
+    Date: { type: Date, default: new Date() },
     userType: { type: String, required: true, default: "anon" },
-    avatar: { type: String, required: false },
-    Exp: { type: String, required: false },
-    skills: { type: String },
-    bio: { type: String },
+    avatar: { type: String, required: false, default: "" },
+    Exp: { type: String, required: false, default: "" },
+    skills: { type: Array, default: [] },
+    bio: { type: String, default: "" },
     // userCV: [CVSchema],
     userCV: [{ type: mongoose.Schema.Types.ObjectId, ref: "CV" }], //ref
 
 })
 UserSchema.pre("save", function (next) {
     const user = this
-    if (!user.isModified) return next()
+    if (!user.isModified("password")) return next()
     genSaltPromise(10) // thanh promise return cai hash
         .then((hash) => hashPromise(user.password, hash))
         .then((hash) => {

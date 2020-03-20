@@ -168,3 +168,34 @@ module.exports.updateJob = (req, res, next) => {
         })
         .catch(err => res.status(400).json(err))
 }
+module.exports.updateProfile = (req, res, next) => {
+    const { id } = req.user
+    const restrict = ["userCV", "_id", "password", "avatar", "email"]
+    let flag = 1
+    User.findById(id)
+        .then(user => {
+            Object.keys(req.body).forEach(key => {
+                if (restrict.findIndex(e => e === key) !== -1)
+                    return flag = 0
+                user[key] = req.body[key]
+            })
+            if (flag === 0)
+                return Promise.reject({ message: "You can't edit this field" })
+            return user.save()
+        })
+        .then(user => res.status(200).json(user))
+        .catch(err => res.status(400).json(err))
+}
+module.exports.uploadAvatar = (req, res, next) => {
+    const { id } = req.user
+    User.findById(id)
+        .then(user => {
+            if (!user) Promise.reject({ message: "User not found" })
+            user.avatar = req.file.path
+            return user.save()
+        })
+        .then(user => {
+            res.status(200).json(user)
+        })
+        .catch(err => res.status(400).json(err))
+}
