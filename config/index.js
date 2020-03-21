@@ -8,7 +8,7 @@ switch (process.env.NODE_ENV) {
         mongoUri = process.env.LOCAL_MONGODB_URI
         port = process.env.LOCAL_PORT
         secretKey = process.env.LOCAL_SECRET_KEY
-        email = process.env.EMAIL
+        email = process.env.LOCAL_EMAIL
         password = process.env.LOCAL_PASSWORD
         break;
     case "staging":

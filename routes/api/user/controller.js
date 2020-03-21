@@ -5,8 +5,11 @@ const { Job } = require("../../../models/Job");
 const jwt = require('jsonwebtoken');
 const { promisify } = require("util");
 const config = require("../../../config");
-
+const { sendReset } = require('../../../services/email/sendemail')
+const path = require('path')
+const fs = require('fs')
 const jwtSign = promisify(jwt.sign);
+const { randomStrings } = require('../index')
 module.exports.register = (req, res, next) => {
     const { email, password, fullname, userType } = req.body
     const newUser = new User({
@@ -198,4 +201,43 @@ module.exports.uploadAvatar = (req, res, next) => {
             res.status(200).json(user)
         })
         .catch(err => res.status(400).json(err))
+}
+module.exports.changePassword = (req, res, next) => {
+    const { id } = req.user
+    const { password, newPass, newPassConfirm } = req.body
+    User.findById(id)
+        .then(user => {
+            return bcrypt.compare(password, user.password)
+
+        })
+        .then(isMatched => {
+            if (!isMatched)
+                return Promise.reject({ message: "Current password is wrong" })
+            if (newPass !== newPassConfirm)
+                return Promise.reject({ message: "new password and new password confirm do not match" })
+            return isMatched
+        })
+        .then(isMatched => {
+            if (!isMatched)
+                return Promise.reject({ message: "Wrong password field" })
+            User.findById(id)
+                .then(user => {
+                    user.password = newPass
+                    user.save()
+                })
+        })
+        .then(user => res.status(200).json(user))
+        .catch(err => res.status(400).json(err))
+}
+module.exports.resetPasswordLink = (req, res, next) => {
+    const { email } = req.body
+    User.findOne({ email })
+        .then((user) => sendReset(user), res.status(400).json({ message: "Reset link has been sent" }))
+        .catch(err => res.status(400).json({ message: "Email not exists" }))
+}
+module.exports.renderResetPage = (req, res, next) => {
+    res.sendFile(path.join(__dirname + '../../../../services/email/template/reset.html'))
+}
+module.exports.resetPassword = (req, res, next) => {
+
 }
