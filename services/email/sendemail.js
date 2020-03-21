@@ -4,7 +4,7 @@ const hogan = require('hogan.js')
 const config = require('../../config/index')
 const template = fs.readFileSync(`${__dirname}/template/index.html`, "utf-8")
 const compiledTemplate = hogan.compile(template)
-module.exports.sendReset = (user) => {
+module.exports.sendReset = (user, token) => {
     const transport = {
         host: "smtp.gmail.com",
         port: 587,
@@ -25,7 +25,8 @@ module.exports.sendReset = (user) => {
         subject: "Reset password link",
         html: compiledTemplate.render({
             name: user.fullname,
-            url: `http://localhost:5000/api/user/auth/reset-password-page/${string}`
+            // url: `http://localhost:5000/api/user/auth/reset-password-page/${token}`,
+            url: `http://localhost:5000/api/user/auth/reset-password-page/reset?code=${token}`
         })
     }
     transporter.sendMail(mailOptions, err => {

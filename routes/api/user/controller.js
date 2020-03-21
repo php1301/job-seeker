@@ -9,7 +9,7 @@ const { sendReset } = require('../../../services/email/sendemail')
 const path = require('path')
 const fs = require('fs')
 const jwtSign = promisify(jwt.sign);
-const { randomStrings } = require('../index')
+const _string = require('./index')
 module.exports.register = (req, res, next) => {
     const { email, password, fullname, userType } = req.body
     const newUser = new User({
@@ -231,12 +231,34 @@ module.exports.changePassword = (req, res, next) => {
 }
 module.exports.resetPasswordLink = (req, res, next) => {
     const { email } = req.body
+    let token
     User.findOne({ email })
-        .then((user) => sendReset(user), res.status(400).json({ message: "Reset link has been sent" }))
+        .then((user) => {
+            const payload = _.pick(user, ["email", "fullname", "_id"])
+            return token = jwtSign(
+                payload, config.secretKey, { expiresIn: '1h' }
+            )
+        })
+        .then(token => {
+            const user = jwt.verify(token, config.secretKey, { expiresIn: '1h' }) // lay payload
+            sendReset(user, token), res.status(400).json({ message: "Reset link has been sent" })
+        })
         .catch(err => res.status(400).json({ message: "Email not exists" }))
 }
 module.exports.renderResetPage = (req, res, next) => {
-    res.sendFile(path.join(__dirname + '../../../../services/email/template/reset.html'))
+    // const { token } = req.params
+    // console.log(token)
+    // const id = jwt.verify(token, config.secretKey, { expiresIn: '1h' })
+    const { code } = req.query
+    console.log(code)
+    const id = jwt.verify(code, config.secretKey, { expiresIn: '1h' })
+    User.findById(id._id)
+        .then(
+            res.sendFile(path.join(__dirname + '../../../../services/email/template/reset.html'))
+        )
+        .catch(
+            err => console.log(err)
+        )
 }
 module.exports.resetPassword = (req, res, next) => {
 

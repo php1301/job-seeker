@@ -14,6 +14,7 @@ const UserSchema = new mongoose.Schema({
     Exp: { type: String, required: false, default: "" },
     skills: { type: Array, default: [] },
     bio: { type: String, default: "" },
+    reset: { type: String, default: "" },
     // userCV: [CVSchema],
     userCV: [{ type: mongoose.Schema.Types.ObjectId, ref: "CV" }], //ref
 
