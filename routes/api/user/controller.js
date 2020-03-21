@@ -261,5 +261,20 @@ module.exports.renderResetPage = (req, res, next) => {
         )
 }
 module.exports.resetPassword = (req, res, next) => {
-
+    // const { token } = req.params
+    // console.log(token)
+    // const id = jwt.verify(token, config.secretKey, { expiresIn: '1h' })
+    const { code } = req.query
+    console.log(code)
+    const id = jwt.verify(code, config.secretKey, { expiresIn: '1h' })
+    const { password, newPassword } = req.body
+    User.findById(id._id)
+        .then(user => {
+            if (password !== newPassword || password.length < 8 || newPassword.length < 8)
+                return Promise.reject({ message: "New password not the same" })
+            user.password = password
+            user.save()
+        })
+        .then(() => { res.status(200).json({ message: "Password changed success" }) })
+        .catch(err => res.status(200).json(err))
 }
