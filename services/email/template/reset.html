@@ -7,13 +7,105 @@
 </head>
 
 <body>
-    <form>
-        <h2>New Password</h2>
-        <input type="password" id="password1" />
-        <h2>Confirm new password</h2>
-        <input type="password" id="password2" />
-        <button>Confirm</button>
+    <form id="resetpass" role="form" class="form">
+        <div>
+            <div id="form-group" role="form">
+                <label for="InputEmail">New Password</label>
+                <input type="password" class="form-control" id="password" class="password" name="password"
+                    placeholder="New password" required>
+                <label for="InputEmail">Confirm Password</label>
+                <input type="password" class="form-control" id="newPassword" class="newPassword" name="newPassword"
+                    placeholder="Confirm" required>
+                <!--    <input type="hidden" name="token" id="token">-->
+                <button onsubmit="performPostRequest()" type="submit">Submit</button>
+            </div>
     </form>
 </body>
+
+
+<script>
+    var params = location.href;
+    var paramsplit = params.split('/');
+    var query = paramsplit[7].split('reset?code=')
+    document.getElementById('form-group').addEventListener('submit', performPostRequest);
+    function performPostRequest(e) {
+
+
+        axios.post('http://localhost:5000/api/user/auth/reset-password-page/reset', {
+            params: {
+                code: query[1]
+            },
+            headers: {
+                token: query[1]
+            },
+            password: document.getElementById("password").value,
+            newPassword: document.getElementById("newPassword").value,
+        })
+            .then(function (response) {
+                console.log("success" + response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        e.preventDefault();
+    }
+    //console.log(paramsplit);
+    // function paramPostAction(e) {
+        //     // var resetData = {
+        //     //     password: $("#password").val(),
+        //     //     newPassword: $("#repass").val(),
+        //     // }
+        // console.log(query[1])
+        //     // console.log(resetData);
+
+        //     // console.log(resetData);
+
+        // axios({
+        //     method: "post",
+        //     contentType: "application/json; charset=utf-8",
+        //     url: 'http://localhost:5000/api/user/auth/reset-password-page/reset',
+        //     params: {
+        //         code: query
+        //     },
+        //     data: {
+        //         password: document.getElementById("password").value,
+        //         newPassword: document.getElementById("newPassword").value,
+        //     },
+        //     // data: JSON.stringify(resetData),
+        // }).then(function (response) {
+        //     console.log("Heade With Authentication :" + response);
+        //     e.preventDefault(); // avoid to execute the actual submit of the form.
+        // })
+        //     .catch(function (error) {
+        //         console.log("Post Error : " + error);
+        //     });
+        // console.log("ok")
+    // };
+
+</script>
+<!-- <script>
+    function HeaderPostAction() {
+        // Send a POST request
+        axios({
+            method: 'post',
+            url: 'http://localhost:2002/token',
+            data: {
+                "username": "admin",
+                "password": "admin123",
+                "grant_type": "password"
+            },
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Cache-Control": "no-cache",
+                "Postman-Token": "42e6c291-9a09-c29f-f28f-11872e2490a5"
+            }
+        }).then(function (response) {
+            console.log("Heade With Authentication :" + response);
+        })
+            .catch(function (error) {
+                console.log("Post Error : " + error);
+            });
+    }
+</script> -->
 
 </html>
