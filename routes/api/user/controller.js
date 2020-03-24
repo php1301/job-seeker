@@ -9,7 +9,7 @@ const { sendReset } = require('../../../services/email/sendemail')
 const path = require('path')
 const fs = require('fs')
 const jwtSign = promisify(jwt.sign);
-const _string = require('./index')
+// const _string = require('./index')
 module.exports.register = (req, res, next) => {
     const { email, password, fullname, userType } = req.body
     const newUser = new User({

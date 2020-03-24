@@ -7,9 +7,9 @@
 </head>
 
 <body>
-    <form id="resetpass" role="form" class="form">
+    <form id="resetpass" class="form">
         <div>
-            <div id="form-group" role="form">
+            <div id="form-group">
                 <label for="InputEmail">New Password</label>
                 <input type="password" class="form-control" id="password" class="password" name="password"
                     placeholder="New password" required>
@@ -17,27 +17,24 @@
                 <input type="password" class="form-control" id="newPassword" class="newPassword" name="newPassword"
                     placeholder="Confirm" required>
                 <!--    <input type="hidden" name="token" id="token">-->
-                <button onsubmit="performPostRequest()" type="submit">Submit</button>
+                <button type="submit">Submit</button>
             </div>
     </form>
 </body>
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 <script>
     var params = location.href;
     var paramsplit = params.split('/');
     var query = paramsplit[7].split('reset?code=')
-    document.getElementById('form-group').addEventListener('submit', performPostRequest);
+    document.getElementById('resetpass').addEventListener('submit', performPostRequest);
     function performPostRequest(e) {
-
-
-        axios.post('http://localhost:5000/api/user/auth/reset-password-page/reset', {
-            params: {
-                code: query[1]
-            },
-            headers: {
-                token: query[1]
-            },
+        console.log("test ", e)
+        e.preventDefault();
+        axios.post(`http://localhost:5000/api/user/auth/reset-password-page/reset?code=${query[1]}`, {
+            // params: {
+            //     code: query[1]
+            // },
             password: document.getElementById("password").value,
             newPassword: document.getElementById("newPassword").value,
         })
@@ -47,7 +44,6 @@
             .catch(function (error) {
                 console.log(error);
             });
-        e.preventDefault();
     }
     //console.log(paramsplit);
     // function paramPostAction(e) {
